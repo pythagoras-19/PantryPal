@@ -43,10 +43,10 @@ app.*.map.json
 /android/app/release
 
 # Xcode will place build artifacts here
-ios/Flutter/Debug.xcconfig
-ios/Flutter/Release.xcconfig
-macos/Flutter/Flutter-Debug.xcconfig
-macos/Flutter/Flutter-Release.xcconfig
-macos/Flutter/GeneratedPluginRegistrant.swift
-ios/Podfile
-macos/Podfile
+/ios/Flutter/Debug.xcconfig
+/ios/Flutter/Release.xcconfig
+/macos/Flutter/Flutter-Debug.xcconfig
+/macos/Flutter/Flutter-Release.xcconfig
+/macos/Flutter/GeneratedPluginRegistrant.swift
+/ios/Podfile
+/macos/Podfile
