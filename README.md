@@ -23,7 +23,7 @@ PantryPal is a single-screen grocery list app built using the Flutter SDK, focus
 
 ### Model
 
-- **GroceryItem**: The data model for each item in the grocery list, including properties like `id`, `name`, and `isSelected`.
+- **GroceryItem**: The data model for each item in the grocery list, including properties `name`, and `quantity`.
 
 ### Data Persistence
 
@@ -51,7 +51,7 @@ For help getting started with Flutter, view the [online documentation](https://d
 ### Setting Up the Development Environment
 
 1. **Install Flutter**: Follow the [Flutter installation guide](https://docs.flutter.dev/get-started/install) to set up your local development environment.
-2. **Clone the Repository**: Clone this repository to your local machine using `git clone <repository-url>`.
+2. **Clone the Repository**: Clone this repository to your local machine using `git clone https://github.com/pythagoras-19/PantryPal.git`.
 3. **Install Dependencies**: Navigate to the project directory and run `flutter pub get` to fetch all the required dependencies.
 
 ### Running the App

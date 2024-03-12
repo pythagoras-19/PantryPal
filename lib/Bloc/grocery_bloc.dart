@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Models/GroceryItem.dart';
+import '../Models/grocery_item.dart';
 
 abstract class GroceryEvent {}
 
@@ -40,7 +40,9 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
     on<UpdateGroceryItem>(_onUpdateGroceryItem);
   }
 
-  Future<void> _onLoadGroceryList(LoadGroceryList event, Emitter<GroceryState> emit) async {
+  Future<void> _onLoadGroceryList(
+                                  LoadGroceryList event,
+                                  Emitter<GroceryState> emit) async {
     final prefs = await SharedPreferences.getInstance();
     final String? encodedData = prefs.getString('groceryList');
     if (encodedData != null) {
@@ -58,7 +60,8 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
   }
 
   void _onRemoveGroceryItem(RemoveGroceryItem event, Emitter<GroceryState> emit) {
-    final newState = List<GroceryItem>.from(state.groceryItems)..removeAt(event.index);
+    final newState =
+      List<GroceryItem>.from(state.groceryItems)..removeAt(event.index);
     emit(GroceryState(groceryItems: newState));
     _saveListToPrefs(newState);
   }
@@ -72,7 +75,8 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
 
   Future<void> _saveListToPrefs(List<GroceryItem> items) async {
     final prefs = await SharedPreferences.getInstance();
-    final String encodedData = json.encode(items.map((item) => item.toJson()).toList());
+    final String encodedData =
+      json.encode(items.map((item) => item.toJson()).toList());
     await prefs.setString('groceryList', encodedData);
   }
 }

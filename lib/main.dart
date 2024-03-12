@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'Models/GroceryItem.dart';
-import 'Bloc/GroceryBloc.dart';
+import 'Models/grocery_item.dart';
+import 'Bloc/grocery_bloc.dart';
 
 void main() {
   runApp(
     BlocProvider(
       create: (context) => GroceryBloc()..add(LoadGroceryList()),
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -37,7 +37,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<GroceryItem> _groceryItems = [];
+  //final List<GroceryItem> _groceryItems = [];
   final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _itemQuantityController = TextEditingController();
 
@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: _itemNameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Item Name',
               ),
             ),
@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: _itemQuantityController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Quantity',
               ),
               keyboardType: TextInputType.number,
@@ -130,28 +130,28 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Edit Item'),
+          title: const Text('Edit Item'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: editNameController,
-                decoration: InputDecoration(labelText: 'Item Name'),
+                decoration: const InputDecoration(labelText: 'Item Name'),
               ),
               TextField(
                 controller: editQuantityController,
-                decoration: InputDecoration(labelText: 'Quantity'),
+                decoration: const InputDecoration(labelText: 'Quantity'),
                 keyboardType: TextInputType.number,
               ),
             ],
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: Text('Save'),
+              child: const Text('Save'),
               onPressed: () {
                 final updatedItem = GroceryItem(
                   name: editNameController.text,
