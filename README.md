@@ -21,7 +21,7 @@ PantryPal is a single-screen grocery list app built using the Flutter SDK, focus
 - **GroceryBloc**: Manages the application's state, specifically the grocery list, by reacting to user interactions and 
   - updating the list accordingly. It handles the following:
 - **Events**:
-  - `LoadGroceryList`: Triggered to load the grocery list from local storage (using shared_preferences).
+  - `LoadGroceryList`: Triggered to load the grocery list from local storage (using `SharedPreferences`).
   - `AddGroceryItem`: Dispatched when a new item is added to the grocery list. It contains the GroceryItem to be added.
   - `RemoveGroceryItem`: Triggered when an item is to be removed from the list, identified by its index. 
   - `UpdateGroceryItem`: Dispatched to update an existing item in the list, identified by its index and the new GroceryItem data.
@@ -51,19 +51,6 @@ PantryPal is a single-screen grocery list app built using the Flutter SDK, focus
 ### Business Logic Components (BLoC Pattern)
 
 - The BLoC pattern is employed to maintain a clean separation between the business logic and the UI, facilitating maintainability and testability.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-To get started with PantryPal, ensure you have Flutter installed on your machine. Clone this repository, navigate to the project directory, and run `flutter pub get` to install the dependencies. Then, you can launch the app on your emulator or physical device using `flutter run`.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter, view the [online documentation](https://docs.flutter.dev/), which offers tutorials, samples, guidance on mobile development, and a full API reference.
 
 ## Developer Instructions
 
