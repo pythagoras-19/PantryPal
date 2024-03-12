@@ -10,17 +10,36 @@ PantryPal is a single-screen grocery list app built using the Flutter SDK, focus
 
 ### User Interface (UI)
 
-- **Main Screen**: Displays the grocery list and allows user interactions. It includes:
-    - **ListView**: Lists all the grocery items with options for interaction.
-    - **FloatingActionButton**: Facilitates adding new grocery items.
-    - **Item Widget**: Represents each grocery item, potentially with options to edit, delete, or select.
-
+- **Main Screen**: 
+  - The top section houses text fields where users input the name and quantity of their desired grocery items. 
+  - A submission is as simple as tapping the `Add Item` button, which dispatches an event to the `GroceryBloc`, 
+  subsequently adding the item to the state-managed list. 
+  - The heart of the interface is the dynamically populated list view, showcasing the current grocery items. 
+  - Each entry in this list is interactive, equipped with edit and delete options, empowering users with full control over their grocery list. 
+  - Editing an item is facilitated through a dialog, ensuring that modifications are both effortless and immediate.
 ### State Management (BLoC/Cubit)
-
-- **GroceryBloc/Cubit**: Manages the app's state, reacting to user interactions and updating the grocery list accordingly. It handles:
-    - **Events**: Such as `AddItem`, `RemoveItem`, `EditItem`, and `ToggleItemSelection`.
-    - **States**: Represents the state of the app, primarily the list of grocery items.
-
+- **GroceryBloc**: Manages the application's state, specifically the grocery list, by reacting to user interactions and 
+  - updating the list accordingly. It handles the following:
+- **Events**:
+  - `LoadGroceryList`: Triggered to load the grocery list from local storage (using shared_preferences).
+  - `AddGroceryItem`: Dispatched when a new item is added to the grocery list. It contains the GroceryItem to be added.
+  - `RemoveGroceryItem`: Triggered when an item is to be removed from the list, identified by its index. 
+  - `UpdateGroceryItem`: Dispatched to update an existing item in the list, identified by its index and the new GroceryItem data.
+- **States**:
+    Represents the state of the grocery list with a property `groceryItems`, a list of `GroceryItem` objects.
+#### BLoC Implementation Details
+- `_onLoadGroceryList`: 
+  - Retrieves the grocery list stored in `SharedPreferences`.
+  - Decodes the JSON stored list and emits a `GroceryState` with the updated grocery items.
+- `_onAddGroceryItem`:
+  - Adds a new item to the grocery list state and updates the list stored in `SharedPreferences`.
+- `_onRemoveGroceryItem`:
+  - Removes the item at the specified index from the grocery list state and updates the list stored in `SharedPreferences`.
+- `_onUpdateGroceryItem`:
+  - Updates the item at the specified index with the new data and refreshes the stored list in `SharedPreferences`.
+- `_saveListToPrefs`:
+  - A utility function to encode the current list of grocery items as JSON and save it to `SharedPreferences`.
+  - **Ensures that the list persists across app restarts.**
 ### Model
 
 - **GroceryItem**: The data model for each item in the grocery list, including properties `name`, and `quantity`.

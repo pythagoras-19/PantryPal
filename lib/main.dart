@@ -7,13 +7,13 @@ void main() {
   runApp(
     BlocProvider(
       create: (context) => GroceryBloc()..add(LoadGroceryList()),
-      child: const MyApp(),
+      child: const PantryPal(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PantryPal extends StatelessWidget {
+  const PantryPal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +23,20 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'PantryPal'),
+      home: const PantryPalHomePage(title: 'PantryPal'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class PantryPalHomePage extends StatefulWidget {
+  const PantryPalHomePage({super.key, required this.title});
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<PantryPalHomePage> createState() => _PantryPalHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  //final List<GroceryItem> _groceryItems = [];
+class _PantryPalHomePageState extends State<PantryPalHomePage> {
   final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _itemQuantityController = TextEditingController();
 
