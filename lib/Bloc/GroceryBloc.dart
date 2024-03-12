@@ -1,81 +1,78 @@
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '/Models/GroceryItem.dart';
+import '../Models/GroceryItem.dart';
 
 abstract class GroceryEvent {}
 
-// events the BLoC will respond to (Add, remove, edit)
+class LoadGroceryList extends GroceryEvent {}
 
-class AddItem extends GroceryEvent {
+class AddGroceryItem extends GroceryEvent {
   final GroceryItem item;
 
-  AddItem(this.item);
+  AddGroceryItem(this.item);
 }
 
-class RemoveItem extends GroceryEvent {
-  final String itemId;
+class RemoveGroceryItem extends GroceryEvent {
+  final int index;
 
-  RemoveItem(this.itemId);
+  RemoveGroceryItem(this.index);
 }
 
-class EditItem extends GroceryEvent {
-  final GroceryItem item;
+class UpdateGroceryItem extends GroceryEvent {
+  final int index;
+  final GroceryItem updatedItem;
 
-  EditItem(this.item);
+  UpdateGroceryItem(this.index, this.updatedItem);
 }
-
-class ToggleItemSelection extends GroceryEvent {
-  final GroceryItem item;
-
-  ToggleItemSelection(this.item);
-}
-
-// Possible States for BLoC
 
 class GroceryState {
-  final List<GroceryItem> items;
+  final List<GroceryItem> groceryItems;
 
-  GroceryState(this.items);
+  GroceryState({this.groceryItems = const []});
 }
 
-// Business logic
-
 class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
-  GroceryBloc() : super(GroceryState([])) {
-    on<AddItem>(_onAddItem);
-    on<RemoveItem>(_onRemoveItem);
-    on<EditItem>(_onEditItem);
-    on<ToggleItemSelection>(_onToggleItemSelection);
+  GroceryBloc() : super(GroceryState()) {
+    on<LoadGroceryList>(_onLoadGroceryList);
+    on<AddGroceryItem>(_onAddGroceryItem);
+    on<RemoveGroceryItem>(_onRemoveGroceryItem);
+    on<UpdateGroceryItem>(_onUpdateGroceryItem);
   }
 
-  void _onAddItem(AddItem event, Emitter<GroceryState> emit) {
-    // TODO: Add logic to handle the item addition
-  }
-
-  void _onRemoveItem(RemoveItem event, Emitter<GroceryState> emit) {
-    // TODO: Add logic to handle the item removal
-  }
-
-  void _onEditItem(EditItem event, Emitter<GroceryState> emit) {
-    // TODO: Add logic to handle the edit of item
-  }
-
-  void _onToggleItemSelection(ToggleItemSelection event, Emitter<GroceryState> emit) {
-    // TODO: Add logic to handle the item selection toggle
-  }
-
-  Future<void> _loadInitialState() async {
-    // TODO: Load the initial state from persistent storage
-  }
-
-  Future<void> _saveToPrefs(GroceryState state) async {
+  Future<void> _onLoadGroceryList(LoadGroceryList event, Emitter<GroceryState> emit) async {
     final prefs = await SharedPreferences.getInstance();
-
-    // Save state to prefs
+    final String? encodedData = prefs.getString('groceryList');
+    if (encodedData != null) {
+      final List<GroceryItem> loadedItems = (json.decode(encodedData) as List)
+          .map((item) => GroceryItem.fromJson(item))
+          .toList();
+      emit(GroceryState(groceryItems: loadedItems));
+    }
   }
 
-  Future<void> _loadFromPrefs() async {
+  void _onAddGroceryItem(AddGroceryItem event, Emitter<GroceryState> emit) {
+    final newState = List<GroceryItem>.from(state.groceryItems)..add(event.item);
+    emit(GroceryState(groceryItems: newState));
+    _saveListToPrefs(newState);
+  }
+
+  void _onRemoveGroceryItem(RemoveGroceryItem event, Emitter<GroceryState> emit) {
+    final newState = List<GroceryItem>.from(state.groceryItems)..removeAt(event.index);
+    emit(GroceryState(groceryItems: newState));
+    _saveListToPrefs(newState);
+  }
+
+  void _onUpdateGroceryItem(UpdateGroceryItem event, Emitter<GroceryState> emit) {
+    final newState = List<GroceryItem>.from(state.groceryItems);
+    newState[event.index] = event.updatedItem;
+    emit(GroceryState(groceryItems: newState));
+    _saveListToPrefs(newState);
+  }
+
+  Future<void> _saveListToPrefs(List<GroceryItem> items) async {
     final prefs = await SharedPreferences.getInstance();
-    // Load state from prefs
+    final String encodedData = json.encode(items.map((item) => item.toJson()).toList());
+    await prefs.setString('groceryList', encodedData);
   }
 }

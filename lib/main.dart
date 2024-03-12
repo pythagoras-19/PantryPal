@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'Models/GroceryItem.dart';
 import 'Bloc/GroceryBloc.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    BlocProvider(
+      create: (context) => GroceryBloc()..add(LoadGroceryList()),
+      child: MyApp(),
+    ),
+  );
 }
-
-final List<Map<String, dynamic>> items = [
-  {'name': 'Bananas', 'image': 'assets/bananas.jpeg'},
-  {'name': 'Potatoes', 'image': 'assets/potato.jpeg'},
-  {'name': 'Oranges', 'image': 'assets/oranges.jpeg'},
-  {'name': 'Apples', 'image': 'assets/apples.jpeg'},
-];
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -39,51 +37,133 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final List<GroceryItem> _groceryItems = [];
+  final TextEditingController _itemNameController = TextEditingController();
+  final TextEditingController _itemQuantityController = TextEditingController();
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  void _addItemToList() {
+    if (_itemNameController.text.isNotEmpty && _itemQuantityController.text.isNotEmpty) {
+      final newItem = GroceryItem(
+        name: _itemNameController.text,
+        quantity: int.tryParse(_itemQuantityController.text) ?? 0,
+      );
+      context.read<GroceryBloc>().add(AddGroceryItem(newItem));
+      _itemNameController.clear();
+      _itemQuantityController.clear();
+    }
   }
 
-  void _decrementCounter() {
-    setState(() {
-      if (_counter > 0) {
-        _counter--;
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .inversePrimary,
         title: Text(widget.title),
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(10),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          return GridTile(
-            child: Image.asset(items[index]['image'], fit: BoxFit.cover),
-            footer: GridTileBar(
-              backgroundColor: Colors.black45,
-              title: Text(items[index]['name'], textAlign: TextAlign.center,),
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _itemNameController,
+              decoration: InputDecoration(
+                labelText: 'Item Name',
+              ),
             ),
-          );
-        },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _itemQuantityController,
+              decoration: InputDecoration(
+                labelText: 'Quantity',
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          ElevatedButton(
+            onPressed: _addItemToList,
+            child: const Text('Add Item'),
+          ),
+          Expanded(
+            child: BlocBuilder<GroceryBloc, GroceryState>(
+              builder: (context, state) {
+                return ListView.builder(
+                  itemCount: state.groceryItems.length,
+                  itemBuilder: (context, index) {
+                    final item = state.groceryItems[index];
+                    return ListTile(
+                      title: Text(item.name),
+                      subtitle: Text('Quantity: ${item.quantity}'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () => _editItem(context, index),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+                              context.read<GroceryBloc>().add(RemoveGroceryItem(index));
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
-}
+  void _editItem(BuildContext context, int index) {
+    final item = context.read<GroceryBloc>().state.groceryItems[index];
 
+    TextEditingController editNameController = TextEditingController(text: item.name);
+    TextEditingController editQuantityController = TextEditingController(text: item.quantity.toString());
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit Item'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: editNameController,
+                decoration: InputDecoration(labelText: 'Item Name'),
+              ),
+              TextField(
+                controller: editQuantityController,
+                decoration: InputDecoration(labelText: 'Quantity'),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () {
+                final updatedItem = GroceryItem(
+                  name: editNameController.text,
+                  quantity: int.tryParse(editQuantityController.text) ?? item.quantity,
+                );
+                context.read<GroceryBloc>().add(UpdateGroceryItem(index, updatedItem));
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}

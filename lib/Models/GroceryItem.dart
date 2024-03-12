@@ -1,29 +1,21 @@
 class GroceryItem {
-  String id;
   String name;
-  double price;
-  bool isSelected;
+  int quantity;
 
   GroceryItem({
-    required this.id,
     required this.name,
-    required this.price,
-    this.isSelected = false
+    required this.quantity,
   });
 
   Map<String, dynamic> toJson() => {
-    'id': id,
     'name': name,
-    'price': price,
-    'isSelected': isSelected,
+    'quantity': quantity,
   };
 
   factory GroceryItem.fromJson(Map<String, dynamic> json) {
     return GroceryItem(
-        id: json['id'],
         name: json['name'],
-        price: json['price'],
-        isSelected: json['isSelected'] ?? false,
+        quantity: json['quantity'],
     );
   }
 }
